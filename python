@@ -1,0 +1,84 @@
+import os
+import time
+
+def print_title():
+    print()
+    print("######################################")
+    print("#           Jurassic Park            #")
+    print("#           Gate Security            #")
+    print("######################################")
+    print()
+
+def source():
+    #My original idea was you are in a maze. You start at / and have to navigate to the folder you want.
+    print("Dennis looks at you annoyed.")
+    print("")
+    print("'Quick quick! Give me the folder path to backup!'")
+    print("")
+    
+    attempts = 0
+    
+    while True:
+        source = input("").strip()
+        if os.path.exists(source) and os.path.isdir(source):
+            print("")
+            print("'Yes, that's it!' Dennis exclaims.")
+            print("")
+            return source
+        else:
+            match attempts:
+                case 0:
+                    print("'That isn't it!' Dennis is annoyed at you.")
+                case 1:
+                    print("'Come on! Where is it?!' Dennis is getting frustrated.")
+                case 2:
+                    print("'Ah ah ah! You didn't say the magic... PATH!' Dennis is losing it.")
+                case 3:
+                    print("'No! Last chance!' Dennis is furious now!")
+                case _:
+                    os.system('cls' if os.name == 'nt' else 'clear')
+                    print("SYSTEM FAILURE - All files deleted!")
+                    print("Dennis has sabotaged the system!")
+                    exit()
+            attempts += 1
+
+def copy(sourcedirectory, targetdirectory):
+    log = ""
+
+    for file in os.listdir(sourcedirectory):
+        #Copy the files. The requirement is that only files are copied, so I don't deal with copying folders.
+        source = os.path.join(sourcedirectory, file)
+        target = os.path.join(targetdirectory, file)
+        if os.path.isfile(source):
+            with open(source, 'rb') as src:
+                with open(target, 'wb') as dst:
+                    dst.write(src.read())
+                    log = log + f"File was copied from {source} was backed up to {target}\n"
+    return log
+
+def main():
+    print_title()
+    
+    #Get source directory!
+    sourcedirectory = source()
+   
+    #Create target directory!
+
+    targetdirectory = time.strftime("%Y-%m-%d %H-%M-%S")
+    os.makedirs(targetdirectory)
+
+    #Now we are ready to copy the files!
+    log = copy(sourcedirectory, targetdirectory)
+    
+    #Create the log file using the log string.
+    with open("log.txt", 'w') as f:
+        f.write(log)
+    
+    os.system('cls' if os.name == 'nt' else 'clear')
+    print("In the end, Dennis botched the update. At least you had a backup!")
+    print("")
+    #Print log for our viewing pleasure.
+    print(f"{log}")
+
+if __name__ == "__main__":
+    main()
